@@ -10,7 +10,3 @@ const app = initializeApp({
 })
 
 export const db = app.database()
-// export const backlog = db.ref('backlog')
-// export const doing = db.ref('doing')
-// export const waiting = db.ref('waiting')
-// export const done = db.ref('done')
