@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Kanban!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.0/lumen/bootstrap.min.css" rel="stylesheet" integrity="sha384-3peic20OBS+kS9351sQOOO1LJYgA7iQkz8mjQQIGqCWy+rkEEOGIIIgQrVqL88+X" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./style/index.css" />
+</head>
+<body>
+    <div id="kanban-app">
+        <div class="row">
+            <div class="colNav col-12">                
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <a class="navbar-brand" href="#">Kanban-App</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modalTask">
+                        New Task
+                    </button>
+                </nav>
+            </div>
+        </div>
+        <div class="modal fade" id="modalTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title">Add Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label>Title:</label>
+                    <input type="text" v-model="taskInput">
+                    <label>Description</label>
+                    <textarea cols="30" rows="5" v-model="taskDes"></textarea>
+                    <label>Points</label>
+                    <input type="text" v-model="points">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" v-on:click="addTask()" data-dismiss="modal">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-sm-12">
+                <div class="card border-primary mb-3" style="max-width: 20rem;">
+                    <div class="card-header">
+                        <h4 class="card-title">Backlog</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">   
+                            <tr class="table-primary" v-for="(task, index) in backlogTasks">
+                                <td>{{index + 1}}</td>
+                                <td>{{task}}</td>
+                                <td><button class="btn btn-info" v-on:click="addDoing(index)">next</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <div class="card border-danger mb-3" style="max-width: 20rem;">
+                    <div class="card-header">
+                        <h4 class="card-title">Doing</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">   
+                            <tr class="table-danger" v-for="(task, index) in doingTasks">
+                                <td>{{index + 1}}</td>
+                                <td>{{task}}</td>
+                                <td><button class="btn btn-secondary" v-on:click="backToBacklog(index)">prev</button></td>
+                                <td><button class="btn btn-info" v-on:click="addWaiting(index)">next</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <div class="card border-warning mb-3" style="max-width: 20rem;">
+                    <div class="card-header">
+                        <h4 class="card-title">Waiting</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">   
+                            <tr class="table-warning" v-for="(task, index) in waitingTasks">
+                                <td>{{index + 1}}</td>
+                                <td>{{task}}</td>
+                                <td><button class="btn btn-secondary" v-on:click="backToDoing(index)">prev</button></td>
+                                <td><button class="btn btn-info" v-on:click="addDone(index)">next</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div> 
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <div class="card border-success mb-3" style="max-width: 20rem;">
+                    <div class="card-header">
+                        <h4 class="card-title">Done</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">   
+                            <tr class="table-success" v-for="(task, index) in doneTasks">
+                                <td>{{index + 1}}</td>
+                                <td>{{task}}</td>
+                                <td><button class="btn btn-secondary" v-on:click="backToWaiting(index)">prev</button></td>
+                                <td><button class="btn btn-info" v-on:click="finishTask(index)">next</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="./script/indexVue.js"></script>
+</body>
+</html>
